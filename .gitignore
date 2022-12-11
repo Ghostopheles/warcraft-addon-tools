@@ -152,5 +152,4 @@ cython_debug/
 #.idea/
 
 *.bat
-*.txt
 .pkgmeta
