@@ -3,7 +3,7 @@ Python CLI tools for World of Warcraft Addon development
 
 ## Requirements
 - Requires Python 3.8.8 or greater
-- Requires [`git`](https://github.com/git-guides/install-git) and [`svn`](https://tortoisesvn.net/downloads.html) to be installed and properly mapped on your `PATH`
+- Requires [`git`](https://github.com/git-guides/install-git) and `svn` to be installed and properly mapped on your `PATH`
 - Requires [`pyyaml`](https://pypi.org/project/PyYAML/)
 
 You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Python package dependencies with `pip install -r requirements.txt`
