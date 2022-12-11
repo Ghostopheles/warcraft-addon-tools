@@ -18,22 +18,22 @@ file_handler = logging.FileHandler(filename=LOG_PATH, encoding="utf-8")
 file_handler.setFormatter(log_format)
 
 logger.addHandler(file_handler)  # adds filehandler to our logger
-
 logger.addHandler(console_handler)  # adds console handler to our logger
+
 logger.setLevel(LOG_LEVEL)
 
 parser = argparse.ArgumentParser(
     prog = "addontools.py",
-    description="A python toolbox for Warcraft addon development",
+    description="A Python toolbox for World of Warcraft addon development",
     epilog="Made by Ghost - https://github.com/Ghostamoose/warcraft-addon-tools"
 )
-subparsers = parser.add_subparsers(title="subcommands", description="valid subcommands", dest="subcommand", help="subcommand help?")
+subparsers = parser.add_subparsers(title="commands", description="tools:", dest="subcommand")
 
-action_parser = subparsers.add_parser("make", help="Action to build specific parts of your project.")
+action_parser = subparsers.add_parser("make", help="Build specific parts of your project.")
 action_parser.add_argument("action", metavar="action", type=str, help="Specific part of your project to build.")
 action_parser.add_argument("-d", "--directory", metavar="directory", dest="directory", type=str, required=True, help=f"Path to the folder that contains your {wap.DOTFILE_NAME} file")
 
-logger.debug(f"Using Python version {sys.version}")
+logger.debug(f"Using Python version {sys.version}\n")
 
 VALID_ACTIONS = ["make"]
 
