@@ -6,6 +6,8 @@ Python CLI tools for World of Warcraft Addon development
 - Requires [`git`](https://github.com/git-guides/install-git) and [`svn`](https://tortoisesvn.net/downloads.html) to be installed and properly mapped on your `PATH`
 - Requires [`pyyaml`](https://pypi.org/project/PyYAML/)
 
+You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Python package dependencies with `pip install -r requirements.txt`
+
 ## Usage
 ### Commands
 `make libs`: Currently the only tool, grabs external dependencies defined in your .pkgmeta file and places them in the correct folder. For use during development.
