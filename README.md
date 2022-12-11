@@ -9,9 +9,9 @@ Python CLI tools for World of Warcraft Addon development
 You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Python package dependencies with `pip install -r requirements.txt`
 
 ## Usage
-**This will generate a log folder beside the .py file, so do keep that in mind when you extract it!**
+**This will generate a log file beside the .py file!**
 ### Commands
-`make libs`: Currently the only tool, grabs external dependencies defined in your .pkgmeta file and places them in the correct folder. For use during development.
+`make libs`: Grabs external dependencies defined in your .pkgmeta file and places them in the correct folder. For use during development.
 
 ### Arguments:
 `-d --directory`: Path to the folder containing your addon and the .pkgmeta file.

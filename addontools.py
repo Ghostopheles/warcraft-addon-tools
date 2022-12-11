@@ -4,9 +4,7 @@ import logging
 import argparse
 import modules as wap # because it was previously called warcraft-addon-packager, or WAP for short
 
-from datetime import datetime
-
-LOG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logs", f'addonTools{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log')
+LOG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), f'addon-tools.log')
 
 LOG_LEVEL = logging.DEBUG
 
