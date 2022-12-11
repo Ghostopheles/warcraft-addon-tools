@@ -1,5 +1,5 @@
 # Warcraft Addon Dev Tools
-Python CLI tools for World of Warcraft Addon development
+Cross-platform Python CLI tools for World of Warcraft Addon development
 
 ## Requirements
 - Requires Python 3.8.8 or greater
