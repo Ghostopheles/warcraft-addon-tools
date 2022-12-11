@@ -15,7 +15,7 @@ class LibFetch:
         self.repo_path = repo_path
         self.checkout_path = os.path.join(repo_path, ".checkout")
 
-        self.logger = logging.getLogger("pkg-helper.lib-fetch")
+        self.logger = logging.getLogger("addon-tools.lib-fetch")
 
         self.dotfile_name = DOTFILE_NAME
 

@@ -2,14 +2,15 @@ import os
 import sys
 import logging
 import argparse
-import modules as wap
+import modules as wap # because it was previously called warcraft-addon-packager, or WAP for short
 
-SELF_PATH = DIR = os.path.dirname(os.path.realpath(__file__))
-LOG_PATH = os.path.join(SELF_PATH, "logs", "wap.log")
+from datetime import datetime
+
+LOG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logs", f'addonTools{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log')
 
 LOG_LEVEL = logging.DEBUG
 
-logger = logging.getLogger("pkg-helper")
+logger = logging.getLogger("addon-tools")
 log_format = logging.Formatter("[%(asctime)s]:[%(levelname)s:%(name)s]: %(message)s")
 
 console_handler = logging.StreamHandler()
@@ -24,9 +25,9 @@ logger.addHandler(console_handler)  # adds console handler to our logger
 logger.setLevel(LOG_LEVEL)
 
 parser = argparse.ArgumentParser(
-    prog = "wap.py",
+    prog = "addontools.py",
     description="A python toolbox for Warcraft addon development",
-    epilog="Made by Ghost - https://github.com/Ghostamoose"
+    epilog="Made by Ghost - https://github.com/Ghostamoose/warcraft-addon-tools"
 )
 subparsers = parser.add_subparsers(title="subcommands", description="valid subcommands", dest="subcommand", help="subcommand help?")
 

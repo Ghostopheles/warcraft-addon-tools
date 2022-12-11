@@ -9,7 +9,7 @@ class YamlParser:
         Parses the {DOTFILE_NAME} file used throughout the packager.
     """
     def __init__(self, yaml_file:str):
-        self.logger = logging.getLogger("pkg-helper.yaml-parser")
+        self.logger = logging.getLogger("addon-tools.yaml-parser")
 
         self.dotfile_name = DOTFILE_NAME
 
