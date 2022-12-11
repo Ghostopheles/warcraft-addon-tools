@@ -21,7 +21,7 @@ Example:
 python addontools.py make libs -d "<your_addon>/.pkgmeta"
 ```
 
-You can always use `-h` for help as well!
+You can always use `-h` for help!
 
 ## Final Note
 
