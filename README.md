@@ -12,6 +12,9 @@ You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Pytho
 ### Commands
 `make libs`: Currently the only tool, grabs external dependencies defined in your .pkgmeta file and places them in the correct folder. For use during development.
 
+### Arguments:
+`-d --directory`: Path to the folder containing your addon and the .pkgmeta file.
+
 Example:
 ```
 python addontools.py make libs -d "<your_addon>/.pkgmeta"
