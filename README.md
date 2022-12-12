@@ -12,9 +12,12 @@ You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Pytho
 **This will generate a log file beside the .py file!**
 ### Commands
 `make libs`: Grabs external dependencies defined in your .pkgmeta file and places them in the correct folder. For use during development.
+- `-d --directory`: Path to the folder containing your addon and the .pkgmeta file.
 
-### Arguments:
-`-d --directory`: Path to the folder containing your addon and the .pkgmeta file.
+`create`: Used to generate a basic addon in your World of Warcraft addons folder (or any folder). Saves you a good 45 seconds of creating a new .lua and .toc file! Can be called with no arguments, will prompt the user for the values.
+- `-n`: A name for your addon.
+- `-a`: An author name.
+- `-d`: Path to the folder you want to generate the addon in.
 
 Example:
 ```
