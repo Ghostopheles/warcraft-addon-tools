@@ -1,6 +1,4 @@
 import os
-import stat
-import shutil
 import logging
 
 class AddonBuilder:
