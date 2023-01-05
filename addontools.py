@@ -31,14 +31,22 @@ subparsers = parser.add_subparsers(title="commands", description="tools:", dest=
 
 action_parser = subparsers.add_parser("make", help="Build specific parts of your project.")
 action_parser.add_argument("action", metavar="action", type=str, help="Specific part of your project to build.")
-action_parser.add_argument("-d", "--directory", metavar="directory", dest="directory", type=str, required=True, help=f"Path to the folder that contains your {wap.DOTFILE_NAME} file")
+action_parser.add_argument("-d", "--directory", metavar="directory", dest="directory", type=str, required=True, help=f"Path to the folder that contains your {wap.PKGMETA_NAME} file")
 
 create_parser = subparsers.add_parser("create", help="Create a new addon.")
 create_parser.add_argument("-n", metavar="name", dest="name", required=False, type=str, help="Name of your new addon.")
 create_parser.add_argument("-a", metavar="author", dest="author", required=False, type=str, help="Your name, for use in the .toc file.")
-create_parser.add_argument("-d", metavar="directory", dest="directory", required=False, type=str, help="The path to your WoW addons folder.")
+create_parser.add_argument("-d", metavar="directory", dest="directory", required=False, type=str, help="Path to your WoW addons folder.")
+
+luacheck_parser = subparsers.add_parser("luacheck", help="Luacheck functions.")
+luacheck_parser.add_argument("action", metavar="action", type=str, help="Luacheck action to execute.")
+luacheck_parser.add_argument("-lc", metavar="luacheck file", dest="luacheck", required=False, type=str, help="Path to your .luacheckrc file.")
+luacheck_parser.add_argument("-p", metavar="luac path", dest="luac", required=False, type=str, help="Path to 'luac.exe'.")
+luacheck_parser.add_argument("-d", metavar="directory", dest="directory", required=False, type=str, help="Path to your addon folder.")
 
 logger.debug(f"Using Python version {sys.version}")
+
+# Ideally these functions would just be integrated into w/e class they're calling instead of cluttering up this file.
 
 def make(make_args):
     if make_args.action == "libs":
@@ -99,6 +107,21 @@ def create(create_args):
 
 create_parser.set_defaults(func=create)
 
+def luacheck(luacheck_args):
+    args = []
+
+    if luacheck_args.action == "globals":
+        if luacheck_args.directory: args.append(luacheck_args.directory)
+        if luacheck_args.luacheck: args.append(luacheck_args.luacheck)
+        if luacheck_args.luac: args.append(luacheck_args.luac)
+
+        luacheck = wap.LuaCheck(*args)
+
+        luacheck.add_global_variables_to_luacheckrc()
+
+luacheck_parser.set_defaults(func=luacheck)
+
 args = parser.parse_args()
 args.func(args)
 
+sys.exit(0)

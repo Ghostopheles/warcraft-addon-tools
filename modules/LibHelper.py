@@ -4,12 +4,12 @@ import shutil
 import logging
 import subprocess
 
-from modules import DOTFILE_NAME, YamlParser
+from modules import PKGMETA_NAME, YamlParser
 
 class LibFetch:
     f"""
         Class for handling the fetching of dependencies from external repositories.\n
-        `repo_path`: Path to the project, should contain the {DOTFILE_NAME} file.
+        `repo_path`: Path to the project, should contain the {PKGMETA_NAME} file.
     """
     def __init__(self, repo_path:str):
         self.repo_path = repo_path
@@ -17,7 +17,7 @@ class LibFetch:
 
         self.logger = logging.getLogger("addon-tools.lib-fetch")
 
-        self.dotfile_name = DOTFILE_NAME
+        self.dotfile_name = PKGMETA_NAME
 
         self.parse_yaml()
 

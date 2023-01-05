@@ -2,16 +2,16 @@ import os
 import yaml
 import logging
 
-from modules import DOTFILE_NAME
+from modules import PKGMETA_NAME
 
 class YamlParser:
     f"""
-        Parses the {DOTFILE_NAME} file used throughout the packager.
+        Parses the {PKGMETA_NAME} file used throughout the packager.
     """
     def __init__(self, yaml_file:str):
         self.logger = logging.getLogger("addon-tools.yaml-parser")
 
-        self.dotfile_name = DOTFILE_NAME
+        self.dotfile_name = PKGMETA_NAME
 
         self.yaml_file = yaml_file
         self.__parse_yaml()
