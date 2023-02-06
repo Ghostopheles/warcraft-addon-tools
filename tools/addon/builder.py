@@ -1,11 +1,13 @@
 import os
 import logging
 
-class AddonBuilder:
+
+class Builder:
     f"""
-        Class for creating new addons from scratch.
+    Class for creating new addons from scratch.
     """
-    def __init__(self, name:str, author:str, directory:str):
+
+    def __init__(self, name: str, author: str, directory: str):
         assert os.path.exists(directory)
 
         self.name = name
@@ -19,7 +21,7 @@ class AddonBuilder:
         addon_path = os.path.join(self.directory, self.name)
         if os.path.exists(addon_path):
             raise FileExistsError("Addon folder already exists.")
-        
+
         os.mkdir(addon_path)
 
         # Now we make the .toc file
@@ -31,7 +33,7 @@ class AddonBuilder:
             f"## Author: Author name here!\n",
             f"## Version: 0.1\n",
             f"\n",
-            f"{self.name}.lua"
+            f"{self.name}.lua",
         ]
 
         with open(os.path.join(addon_path, f"{self.name}.toc"), "w") as toc:
@@ -44,13 +46,10 @@ class AddonBuilder:
             "-- Hey! Put some fun information about your addon here!\n",
             "-- Maybe put your name here?\n",
             "-- To-do list maybe?\n",
-            "-------------------------------------------\n"
+            "-------------------------------------------\n",
         ]
 
         with open(os.path.join(addon_path, f"{self.name}.lua"), "w") as lua_file:
             lua_file.writelines(lua_contents)
 
         self.logger.info("Addon created!")
-
-if __name__ == "__main__":
-    pass
