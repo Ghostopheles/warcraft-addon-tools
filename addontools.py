@@ -117,6 +117,11 @@ luacheck_parser.set_defaults(func=wap.luac.luac)
 logger.debug(f"Using Python version {sys.version}")
 
 args = parser.parse_args()
+
+if not hasattr(args, "func"):
+    logger.error("No command chosen. Please try again.")
+    sys.exit(1)
+
 args.func(args)
 
 sys.exit(0)
