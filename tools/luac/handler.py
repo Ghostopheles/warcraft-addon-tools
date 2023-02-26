@@ -1,7 +1,7 @@
 import tools
 
 
-def luac(luacheck_args):
+def luac_handler(luacheck_args):
     args = []
 
     if luacheck_args.action == "globals":

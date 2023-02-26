@@ -70,4 +70,4 @@ LC_WARNINGS = [
     "631",  # Line is too long.
 ]
 
-LC_FIELDS_TO_READ = ["ignore", "globals", "read_globals", "stds.wow"]
+LC_FIELDS_TO_READ = ["ignore", "exclude_files"]
