@@ -27,18 +27,16 @@ class LuaCheck:
     def get_luac_path(self):
         self.logger.info("Finding luac path...")
 
-        luac_path = None
+        interface = tools.shared.interface.verify_interface(
+            tools.cfg.luac.LC_COMMON_ALIASES
+        )
 
-        for alias in tools.cfg.luac.LC_COMMON_ALIASES:
-            if shutil.which(alias):
-                luac_path = alias
-
-        if not luac_path:
+        if not interface:
             raise EnvironmentError(
                 'luac 5.1 not found. Specify a custom luac path with -p "path/to/luac.exe"'
             )
         else:
-            return luac_path
+            return interface
 
     def luac_version_supported(self):
         self.logger.info("Checking luac version...")
