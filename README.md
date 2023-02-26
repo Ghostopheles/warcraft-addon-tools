@@ -3,7 +3,7 @@ Cross-platform Python CLI tools for World of Warcraft Addon development
 
 ## Requirements
 - Requires Python 3.8.8 or greater
-- Requires [`git`](https://github.com/git-guides/install-git) and `svn` to be installed and properly mapped on your `PATH`
+- Requires [`git`](https://github.com/git-guides/install-git), `svn`, and `luac` to be installed and properly mapped on your `PATH`
 - Requires [`pyyaml`](https://pypi.org/project/PyYAML/)
 
 You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Python package dependencies with `pip install -r requirements.txt`
@@ -18,6 +18,13 @@ You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Pytho
 - `-n`: A name for your addon.
 - `-a`: An author name.
 - `-d`: Path to the folder you want to generate the addon in.
+
+`luacheck globals`: Used to run `luac` and automatically add all accessed global variables to your `.luacheckrc` file. 
+
+**WARNING**: This is not 100% complete and does have the ability to eat your `.luacheckrc` file. It makes backups, but will only go up to 5 before it starts deleting files.
+- `-d`: Path to your Lua project
+- `-lc`: Path to your existing `.luacheckrc` file.
+- `-p`: Path to `luac.exe`. This will be automatically found if it's on your `PATH`.
 
 Example:
 ```
