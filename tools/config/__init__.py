@@ -1,2 +1,1 @@
-from .constants import *
-from .LC_constants import *
+from tools.config import filenames, luac, make

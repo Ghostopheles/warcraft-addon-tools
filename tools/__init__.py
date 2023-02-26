@@ -1,9 +1,8 @@
 """The so-called 'warcraft addon tools'. Use at your own risk."""
 
-from . import config as cfg
-
-from . import make
-from . import addon
-from . import librarian as lib
-from . import luac
-from . import yamlTools as yaml
+import tools.config as cfg
+import tools.luac as luac
+import tools.make as make
+import tools.utils as utils
+import tools.yamlTools as yaml
+import tools.addon as addon

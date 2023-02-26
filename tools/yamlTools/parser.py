@@ -6,13 +6,13 @@ import tools
 
 class YamlParser:
     f"""
-    Parses the {tools.cfg.PKGMETA_NAME} file used throughout the packager.
+    Parses the {tools.cfg.filenames.PKGMETA_NAME} file used throughout the packager.
     """
 
     def __init__(self, yaml_file: str):
         self.logger = logging.getLogger("addon-tools.yaml-parser")
 
-        self.dotfile_name = tools.cfg.PKGMETA_NAME
+        self.dotfile_name = tools.cfg.filenames.PKGMETA_NAME
 
         self.yaml_file = yaml_file
         self.__parse_yaml()

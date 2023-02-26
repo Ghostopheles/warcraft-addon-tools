@@ -46,7 +46,7 @@ action_parser.add_argument(
     dest="directory",
     type=str,
     required=True,
-    help=f"Path to the folder that contains your {wap.cfg.PKGMETA_NAME} file",
+    help=f"Path to the folder that contains your {wap.cfg.filenames.PKGMETA_NAME} file",
 )
 
 action_parser.set_defaults(func=wap.make.make_handler)
@@ -107,7 +107,7 @@ luacheck_parser.add_argument(
     dest="luacheck",
     required=False,
     type=str,
-    help=f"Path to your {wap.cfg.LUACHECK_NAME} file.",
+    help=f"Path to your {wap.cfg.filenames.LUACHECK_NAME} file.",
 )
 luacheck_parser.add_argument(
     "-p",
