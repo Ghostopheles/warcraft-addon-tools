@@ -39,7 +39,7 @@ class LuaCheckParser:
 
     def parse_luacheck_file(self):
         with open(self.luacheck_file, "r") as luacheck:
-            luacheck_data = {field: [] for field in tools.cfg.LC_FIELDS_TO_READ}
+            luacheck_data = {field: [] for field in tools.cfg.luac.LC_FIELDS_TO_READ}
             lines = luacheck.readlines()
 
             in_field = False

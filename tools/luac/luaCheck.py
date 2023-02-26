@@ -9,7 +9,7 @@ import tools
 
 class LuaCheck:
     f"""
-    Class for managing and updating the {tools.cfg.LUACHECK_NAME} file.
+    Class for managing and updating the {tools.cfg.filenames.LUACHECK_NAME} file.
     """
 
     def __init__(
@@ -27,18 +27,16 @@ class LuaCheck:
     def get_luac_path(self):
         self.logger.info("Finding luac path...")
 
-        luac_path = None
+        interface = tools.shared.interface.verify_interface(
+            tools.cfg.luac.LC_COMMON_ALIASES
+        )
 
-        for alias in tools.cfg.LC_COMMON_ALIASES:
-            if shutil.which(alias):
-                luac_path = alias
-
-        if not luac_path:
+        if not interface:
             raise EnvironmentError(
                 'luac 5.1 not found. Specify a custom luac path with -p "path/to/luac.exe"'
             )
         else:
-            return luac_path
+            return interface
 
     def luac_version_supported(self):
         self.logger.info("Checking luac version...")
@@ -56,19 +54,19 @@ class LuaCheck:
         # This is sort of ugly but all it does is take the version string and pick out the numbers.
         luac_version = luac_out.stdout.decode().split(" ")[1].split(".")
 
-        return luac_version in tools.cfg.LC_SUPPORTED_VERSIONS
+        return luac_version in tools.cfg.luac.LC_SUPPORTED_VERSIONS
 
     def get_luacheck_file(self):
-        self.logger.info(f"Searching for {tools.cfg.LUACHECK_NAME}...")
+        self.logger.info(f"Searching for {tools.cfg.filenames.LUACHECK_NAME}...")
         luacheck_file = None
 
         for file in os.listdir(self.directory):
-            if file.endswith(tools.cfg.LUACHECK_NAME):
+            if file.endswith(tools.cfg.filenames.LUACHECK_NAME):
                 luacheck_file = os.path.join(self.directory, file)
 
         if not luacheck_file:
             raise FileNotFoundError(
-                f'{tools.cfg.LUACHECK_NAME} file not found. Specify a custom path with -lc "path/to/{tools.cfg.LUACHECK_NAME}"'
+                f'{tools.cfg.filenames.LUACHECK_NAME} file not found. Specify a custom path with -lc "path/to/{tools.cfg.filenames.LUACHECK_NAME}"'
             )
 
         return luacheck_file
@@ -173,9 +171,6 @@ class LuaCheck:
         for variable in globals_to_add:
             if self.apply_ignore_patterns(ignore_patterns, variable):
                 new_globals.remove(variable)
-            else:
-                # self.logger.debug(f"Filtering variable {variable}...")
-                pass
 
         return new_globals
 

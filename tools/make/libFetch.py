@@ -10,20 +10,37 @@ import tools
 class LibFetch:
     f"""
     Class for handling the fetching of dependencies from external repositories.\n
-    `repo_path`: Path to the project, should contain the {tools.cfg.PKGMETA_NAME} file.
+    `repo_path`: Path to the project, should contain the {tools.cfg.filenames.PKGMETA_NAME} file.
     """
 
-    def __init__(self, repo_path: str):
+    def __init__(
+        self, repo_path: str, svn_path: str | None = None, git_path: str | None = None
+    ):
         self.repo_path = repo_path
+        self.svn_path = svn_path
+        self.git_path = git_path
+
+        self.check_required_interfaces()
+
         self.checkout_path = os.path.join(repo_path, ".checkout")
 
         self.logger = logging.getLogger("addon-tools.lib-fetch")
 
-        self.dotfile_name = tools.cfg.PKGMETA_NAME
+        self.dotfile_name = tools.cfg.filenames.PKGMETA_NAME
 
         self.parse_yaml()
 
         self.moved_files = False
+
+    def check_required_interfaces(self):
+        svn_cmd = self.svn_path or tools.cfg.make.SVN_CMD
+        git_cmd = self.git_path or tools.cfg.make.GIT_CMD
+
+        if not tools.utils.verify_interface(svn_cmd):
+            raise EnvironmentError(f"{svn_cmd} not found or is not working correctly.")
+
+        if not tools.utils.verify_interface(git_cmd):
+            raise EnvironmentError(f"{git_cmd} not found or is not working correctly.")
 
     def parse_yaml(self):
         yaml_file = os.path.join(self.repo_path, self.dotfile_name)
@@ -54,11 +71,11 @@ class LibFetch:
         if not os.path.exists(repo_path):
             os.makedirs(repo_path)
 
-        command = f"svn export {url} {repo_path} --force"
+        command = f"{tools.cfg.make.SVN_CMD} export {url} {repo_path} --force"
         subprocess.run(command, capture_output=True, shell=True, cwd=repo_path)
         self.logger.info(f"Successfully pulled {name}.")
 
-    def fetch_git_repo(self, name: str, url: str | dict[str, str]):
+    def fetch_git_repo(self, final_name: str, url: str | dict[str, str]):
         new_url = None
         name = name.replace(".", "-")
 
@@ -73,7 +90,7 @@ class LibFetch:
             os.makedirs(self.checkout_path)
 
         try:
-            command = f"git clone "
+            command = f"{tools.cfg.make.GIT_CMD} clone "
             if new_url:
                 command += f"{new_url} -b {branch} "
             else:
