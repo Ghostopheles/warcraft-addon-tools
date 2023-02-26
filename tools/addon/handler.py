@@ -4,7 +4,7 @@ import tools
 logger = logging.getLogger("addon-tools.addon.handler")
 
 
-def create(create_args):
+def create_handler(create_args):
     # Prompt user to input a name if none was given through the command line
     if not create_args.name:
         while True:

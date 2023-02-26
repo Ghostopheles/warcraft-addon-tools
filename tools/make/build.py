@@ -7,7 +7,7 @@ import tools
 logger = logging.getLogger("addon-tools.make.build")
 
 
-def build(make_args):
+def make_handler(make_args):
     if make_args.action == "libs":
         _libs(make_args)
 

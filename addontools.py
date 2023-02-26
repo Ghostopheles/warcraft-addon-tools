@@ -14,7 +14,7 @@ log_format = logging.Formatter("[%(asctime)s]:[%(levelname)s:%(name)s]: %(messag
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(log_format)
 
-file_handler = logging.FileHandler(filename=LOG_PATH, encoding="utf-8")
+file_handler = logging.FileHandler(filename=LOG_PATH, encoding="utf-8", mode="w")
 file_handler.setFormatter(log_format)
 
 logger.addHandler(file_handler)  # adds filehandler to our logger
@@ -49,11 +49,20 @@ action_parser.add_argument(
     help=f"Path to the folder that contains your {wap.cfg.PKGMETA_NAME} file",
 )
 
-action_parser.set_defaults(func=wap.make.build)
+action_parser.set_defaults(func=wap.make.make_handler)
 
 # Addon builder tools
 
 create_parser = subparsers.add_parser("create", help="Create a new addon.")
+create_parser.add_argument(
+    "-d",
+    "--directory",
+    metavar="directory",
+    dest="directory",
+    required=False,
+    type=str,
+    help="Path to your WoW addons folder.",
+)
 create_parser.add_argument(
     "-n",
     metavar="name",
@@ -70,22 +79,27 @@ create_parser.add_argument(
     type=str,
     help="Your name, for use in the .toc file.",
 )
-create_parser.add_argument(
-    "-d",
-    metavar="directory",
-    dest="directory",
-    required=False,
-    type=str,
-    help="Path to your WoW addons folder.",
-)
 
-create_parser.set_defaults(func=wap.addon.create)
+create_parser.set_defaults(func=wap.addon.create_handler)
 
 # LuaCheck tools
 
 luacheck_parser = subparsers.add_parser("luacheck", help="Luacheck functions.")
 luacheck_parser.add_argument(
-    "action", metavar="action", type=str, help="Luacheck action to execute."
+    "action",
+    metavar="action",
+    type=str,
+    choices=["globals"],
+    help="Luacheck action to execute. Supported: globals",
+)
+luacheck_parser.add_argument(
+    "-d",
+    "--directory",
+    metavar="directory",
+    dest="directory",
+    required=False,
+    type=str,
+    help="Path to your addon folder.",
 )
 luacheck_parser.add_argument(
     "-lc",
@@ -93,7 +107,7 @@ luacheck_parser.add_argument(
     dest="luacheck",
     required=False,
     type=str,
-    help="Path to your .luacheckrc file.",
+    help=f"Path to your {wap.cfg.LUACHECK_NAME} file.",
 )
 luacheck_parser.add_argument(
     "-p",
@@ -101,25 +115,19 @@ luacheck_parser.add_argument(
     dest="luac",
     required=False,
     type=str,
-    help="Path to 'luac.exe'.",
-)
-luacheck_parser.add_argument(
-    "-d",
-    metavar="directory",
-    dest="directory",
-    required=False,
-    type=str,
-    help="Path to your addon folder.",
+    help="Path to luac.exe.",
 )
 
-luacheck_parser.set_defaults(func=wap.luac.luac)
+luacheck_parser.set_defaults(func=wap.luac.luac_handler)
 
-logger.debug(f"Using Python version {sys.version}")
+logger.info(f"Using Python version {sys.version}")
 
 args = parser.parse_args()
 
 if not hasattr(args, "func"):
-    logger.error("No command chosen. Please try again.")
+    logger.error(
+        "No command chosen. Please enter a command. For help use -h or --help."
+    )
     sys.exit(1)
 
 args.func(args)

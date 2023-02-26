@@ -25,7 +25,7 @@ class LuaCheck:
         self.luac_path = luac_path or self.get_luac_path()
 
     def get_luac_path(self):
-        self.logger.debug("Finding luac path...")
+        self.logger.info("Finding luac path...")
 
         luac_path = None
 
@@ -41,10 +41,10 @@ class LuaCheck:
             return luac_path
 
     def luac_version_supported(self):
-        self.logger.debug("Checking luac version...")
+        self.logger.info("Checking luac version...")
 
         if not shutil.which("luac") and self.luac_path == "luac":
-            self.logger.error(
+            self.logger.critical(
                 'luac not found on system PATH. Specify a custom luac path with -p "path/to/luac.exe"'
             )
             return False
@@ -80,7 +80,9 @@ class LuaCheck:
             parent_dir = root.split("\\")[-1]
             for dir in dirs:
                 dirpath = os.path.join(parent_dir, dir)
-                if dirpath.replace("\\", "/") in self.luacheck_data["exclude_files"]:
+                if dirpath.replace("\\", "/").lower() in (
+                    path.lower() for path in self.luacheck_data["exclude_files"]
+                ):
                     dirs.remove(dir)
                     continue
             for name in files:
@@ -128,7 +130,7 @@ class LuaCheck:
 
             for line in out_lines:
                 line = line.decode()
-                if "GETGLOBAL" in line:
+                if "GETGLOBAL" in line or "SETGLOBAL" in line:
                     line = line.split(" ")
                     global_variables.append(line[-1])
 
@@ -136,15 +138,25 @@ class LuaCheck:
 
     def create_backup_luacheck(self):
         self.logger.info("Backing up luacheck file...")
-        shutil.copyfile(self.luacheck_file, f"{self.luacheck_file}.bak")
+        backup_filename = self.luacheck_file + ".bak"
+        if os.path.exists(backup_filename):
+            i = 1
+            while os.path.exists(f"{backup_filename}{i}"):
+                i += 1
+                if i >= 5:
+                    self.logger.warning(
+                        ".luacheckrc will only keep 5 backups. Clear your backups!"
+                    )
+                    break
+            backup_filename = f"{backup_filename}{i}"
+
+        shutil.copyfile(self.luacheck_file, backup_filename)
 
     def apply_ignore_patterns(self, ignore_patterns, var: str) -> bool:
         for luac_pattern in ignore_patterns:
-            for pattern in luac_pattern:
-                result = re.search(pattern, var)
-
-                if result:
-                    return True
+            result = luac_pattern.regex_patterns.findall(var)
+            if result:
+                return True
 
         return False
 
@@ -152,7 +164,7 @@ class LuaCheck:
         if not new_globals:
             return False
 
-        self.logger.debug("Filtering globals...")
+        self.logger.info("Filtering globals...")
 
         ignore_patterns = self.luacheck_data["ignore"]
 
@@ -161,6 +173,9 @@ class LuaCheck:
         for variable in globals_to_add:
             if self.apply_ignore_patterns(ignore_patterns, variable):
                 new_globals.remove(variable)
+            else:
+                # self.logger.debug(f"Filtering variable {variable}...")
+                pass
 
         return new_globals
 
@@ -181,24 +196,21 @@ class LuaCheck:
         lines_to_write = []
 
         for meta_var in self.luacheck_data["meta"]:
-            meta_var_line = f"{meta_var[0]} = {meta_var[1]}"
-            if not meta_var_line.endswith(";"):
-                meta_var_line += ";"
+            value = meta_var[1]
 
-            meta_var_line += "\n"
+            if value == "true" or value == "false":
+                value = value.replace('"', "")
+            else:
+                value = f'"{value}"'
 
+            meta_var_line = f"{meta_var[0]} = {value};\n"
             lines_to_write.append(meta_var_line)
 
         lines_to_write.append("\n")
         lines_to_write.append("exclude_files = {\n")
 
         for exclude in self.luacheck_data["exclude_files"]:
-            exclude_line = f"\t{exclude}"
-            if not exclude_line.endswith(","):
-                exclude_line += ","
-
-            exclude_line += "\n"
-
+            exclude_line = f'\t"{exclude}",\n'
             lines_to_write.append(exclude_line)
 
         lines_to_write.append("};")
@@ -225,7 +237,7 @@ class LuaCheck:
             total_variables_added += len(section)
 
         self.logger.info(
-            f"Rebuilding complete! Added {total_variables_added} global variables to .luacheckrc"
+            f"Rebuilding complete! Added {total_variables_added} global variables to .luacheckrc file."
         )
 
         return True

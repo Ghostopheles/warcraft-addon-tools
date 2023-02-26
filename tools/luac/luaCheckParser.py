@@ -6,27 +6,14 @@ class LuaCheckPattern:
     """A class for holding/interacting with LuaCheck patterns."""
 
     SEPARATOR = "/"
+    REGEX_SEPERATOR = "|"
 
     def __init__(self, pattern: str):
         pattern = pattern.replace('",', "").replace('"', "")
         self.raw = pattern
 
-        patterns = pattern.split(self.SEPARATOR)
-        self.regex_patterns = [re.compile(pattern) for pattern in patterns]
-
-        self.max = len(self.regex_patterns) - 1
-
-    def __iter__(self):
-        self.n = 0
-        return self
-
-    def __next__(self):
-        if self.n <= self.max:
-            result = self.regex_patterns[self.n]
-            self.n += 1
-            return result
-        else:
-            raise StopIteration
+        patterns = f"({self.raw})".replace(self.SEPARATOR, self.REGEX_SEPERATOR)
+        self.regex_patterns = re.compile(patterns)
 
 
 class LuaCheckParser:
@@ -39,6 +26,7 @@ class LuaCheckParser:
     def sanitize_line(self, line: str):
         line = line.replace("\t", "")
         line = line.replace("\n", "")
+        line = line.replace('",', "").replace('"', "")
         return line
 
     def parse_variable(self, line: str):
@@ -81,7 +69,9 @@ class LuaCheckParser:
                     if "meta" not in luacheck_data:
                         luacheck_data["meta"] = []
 
-                    luacheck_data["meta"].append([variable_name, variable_value])
+                    luacheck_data["meta"].append(
+                        [variable_name, variable_value.replace(";", "")]
+                    )
 
                 if line.split(" ")[-1] == self.SOF and not in_field:
                     in_field = True
