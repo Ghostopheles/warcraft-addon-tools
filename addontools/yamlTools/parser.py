@@ -1,18 +1,18 @@
 import os
 import yaml
 import logging
-import tools
+import addontools
 
 
 class YamlParser:
     f"""
-    Parses the {tools.cfg.filenames.PKGMETA_NAME} file used throughout the packager.
+    Parses the {addontools.cfg.filenames.PKGMETA_NAME} file used throughout the packager.
     """
 
     def __init__(self, yaml_file: str):
         self.logger = logging.getLogger("addon-tools.yaml-parser")
 
-        self.dotfile_name = tools.cfg.filenames.PKGMETA_NAME
+        self.dotfile_name = addontools.cfg.filenames.PKGMETA_NAME
 
         self.yaml_file = yaml_file
         self.__parse_yaml()
@@ -38,4 +38,7 @@ class YamlParser:
                 return False
 
     def __getitem__(self, item):
-        return self.yaml_data[item]
+        if item in self.yaml_data:
+            return self.yaml_data[item]
+        else:
+            return None

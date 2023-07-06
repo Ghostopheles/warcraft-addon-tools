@@ -1,5 +1,5 @@
 import logging
-import tools
+import addontools
 
 logger = logging.getLogger("addon-tools.addon.handler")
 
@@ -47,4 +47,4 @@ def create_handler(create_args):
         directory = create_args.directory
 
     # Finally build the addon
-    tools.addon.Builder(name, author, directory).create_new_addon()
+    addontools.addon.Builder(name, author, directory).create_new_addon()

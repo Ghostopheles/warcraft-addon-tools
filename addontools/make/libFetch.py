@@ -4,13 +4,13 @@ import shutil
 import logging
 import subprocess
 
-import tools
+import addontools
 
 
 class LibFetch:
     f"""
     Class for handling the fetching of dependencies from external repositories.\n
-    `repo_path`: Path to the project, should contain the {tools.cfg.filenames.PKGMETA_NAME} file.
+    `repo_path`: Path to the project, should contain the {addontools.cfg.filenames.PKGMETA_NAME} file.
     """
 
     def __init__(
@@ -26,25 +26,31 @@ class LibFetch:
 
         self.logger = logging.getLogger("addon-tools.lib-fetch")
 
-        self.dotfile_name = tools.cfg.filenames.PKGMETA_NAME
+        self.dotfile_name = addontools.cfg.filenames.PKGMETA_NAME
 
         self.parse_yaml()
 
         self.moved_files = False
 
     def check_required_interfaces(self):
-        svn_cmd = self.svn_path or tools.cfg.make.SVN_CMD
-        git_cmd = self.git_path or tools.cfg.make.GIT_CMD
+        svn_cmd = self.svn_path or addontools.cfg.make.SVN_CMD
+        git_cmd = self.git_path or addontools.cfg.make.GIT_CMD
 
-        if not tools.shared.interface.verify_interface(svn_cmd):
+        if not addontools.shared.interface.verify_interface(svn_cmd):
             raise EnvironmentError(f"{svn_cmd} not found or is not working correctly.")
 
-        if not tools.shared.interface.verify_interface(git_cmd):
+        if not addontools.shared.interface.verify_interface(git_cmd):
             raise EnvironmentError(f"{git_cmd} not found or is not working correctly.")
+
+    def get_meta_tag_name(self, meta: dict[str, str]) -> str:
+        for key in addontools.cfg.make.META_BRANCH_KEYS:
+            if key in meta:
+                return key
+        return ""
 
     def parse_yaml(self):
         yaml_file = os.path.join(self.repo_path, self.dotfile_name)
-        yaml_data = tools.yaml.YamlParser(yaml_file)
+        yaml_data = addontools.yaml.YamlParser(yaml_file)
 
         if not yaml_data:
             raise Exception(f"Error occurred when parsing {self.dotfile_name} file.")
@@ -57,7 +63,7 @@ class LibFetch:
         self.yaml_manual_changelog = yaml_data["manual-changelog"]
         self.yaml_move_folders = yaml_data["move-folders"]
 
-        self.checkout_path = os.path.join(self.checkout_path, self.yaml_package_as)
+        self.checkout_path = os.path.join(self.checkout_path, self.yaml_package_as)  # type: ignore
 
     def on_rm_error(self, func, path, exc_info):
         # from: https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows <3
@@ -65,10 +71,15 @@ class LibFetch:
         os.unlink(path)
 
     def get_name_from_url_path(self, path: str) -> str:
+        if path[-1] == "/" or path[-1] == "\\":
+            path = path[:-1]
         return path.split("/")[-1]
 
     def get_path_without_name(self, path: str) -> str:
         return "\\".join(path.split("/")[:-1])
+
+    def rename_lib_folder(self, srcPath: str, dstPath: str) -> None:
+        os.rename(srcPath, dstPath)
 
     def fetch_svn_repo(self, name: str, url: str):
         self.logger.info(f"Fetching {name}...")
@@ -77,7 +88,7 @@ class LibFetch:
         if not os.path.exists(repo_path):
             os.makedirs(repo_path)
 
-        command = f"{tools.cfg.make.SVN_CMD} export {url} {repo_path} --force"
+        command = f"{addontools.cfg.make.SVN_CMD} export {url} {repo_path} --force"
         subprocess.run(command, capture_output=True, shell=True, cwd=repo_path)
         self.logger.info(f"Successfully pulled {name}.")
 
@@ -90,7 +101,7 @@ class LibFetch:
 
         if isinstance(url, dict):
             new_url = url["url"]
-            branch = url["branch"]
+            branch = url[self.get_meta_tag_name(url)]
             internal_dir_name = self.get_name_from_url_path(new_url)
         else:
             if repo_type == "git":
@@ -100,14 +111,14 @@ class LibFetch:
 
         self.logger.info(f"Fetching {internal_dir_name}...")
         lib_path = os.path.join(self.checkout_path, final_dir_path, internal_dir_name)
-        self.logger.debug(lib_path)
+        self.logger.debug("Lib path: ", lib_path)
 
         if not os.path.exists(lib_path):
             os.makedirs(lib_path)
 
         if repo_type == "git":
             try:
-                command = f"{tools.cfg.make.GIT_CMD} clone "
+                command = f"{addontools.cfg.make.GIT_CMD} clone "
                 if new_url:
                     command += f"{new_url} -b {branch} "
                 elif isinstance(url, str):
@@ -141,14 +152,20 @@ class LibFetch:
                 if final_path != lib_path:
                     os.rename(lib_path, final_path)
 
+            except FileExistsError as f:
+                self.logger.critical(
+                    f"Error renaming {internal_dir_name} to {final_dir_name}..."
+                )
+                self.logger.debug(f)
+                return False
+
             except Exception as f:
-                self.logger.error(f"Error fetching {internal_dir_name}...")
-                self.logger.critical(f)
+                self.logger.error(f"Error fetching {internal_dir_name}...", exc_info=f)
                 return False
 
         elif repo_type == "svn":
             try:
-                command = f"{tools.cfg.make.SVN_CMD} export {new_url or url} {lib_path} --force"
+                command = f"{addontools.cfg.make.SVN_CMD} export {new_url or url} {lib_path} --force"
 
                 subprocess.run(
                     command,
@@ -163,6 +180,13 @@ class LibFetch:
                 if final_path != lib_path:
                     os.rename(lib_path, final_path)
 
+            except FileExistsError as f:
+                self.logger.critical(
+                    f"Error renaming {internal_dir_name} to {final_dir_name}..."
+                )
+                self.logger.debug(f)
+                return False
+
             except Exception as f:
                 self.logger.error(f"Error fetching {internal_dir_name}...")
                 self.logger.critical(f)
@@ -172,40 +196,63 @@ class LibFetch:
         return True
 
     def get_external_libs(self):
+        success = False
+
+        if os.path.exists(os.path.join(self.repo_path, ".checkout")):
+            self.logger.error(
+                ".checkout folder already exists in repo root. Please remove this folder and try again."
+            )
+            return False
+
         if self.yaml_externals:
             for name, url in self.yaml_externals.items():
                 if "/trunk" in url:
-                    self.fetch_repo(name, url, "svn")
+                    success = self.fetch_repo(name, url, "svn")
                 else:
-                    self.fetch_repo(name, url, "git")
+                    success = self.fetch_repo(name, url, "git")
+
+                if not success:
+                    self.logger.critical(f"Failed to fetch {name}.")
+                    return False
+
             self.move_lib_folders()
-            # self.cleanup()
+            self.cleanup()
             self.logger.info("Lib fetching complete!")
+            self.logger.warning(
+                "LibFetch may leave behind extra folders in your project's lib directory. Please ensure your libs directory is clean."
+            )
 
             return True
         else:
-            self.logger.error("Lib fetching failed! Call an ambulance!")
+            self.logger.error(
+                f"Lib fetching failed! External libs not found in {addontools.cfg.filenames.PKGMETA_NAME}."
+            )
 
             return False
 
     def move_lib_folders(self):
         self.logger.info("Moving folders...")
 
-        ignore_pattern = shutil.ignore_patterns(*self.yaml_ignore)
+        if self.yaml_ignore:
+            ignore_pattern = shutil.ignore_patterns(*self.yaml_ignore)
+        else:
+            ignore_pattern = None
 
-        for src, dest in self.yaml_move_folders.items():
-            source, destination = (
-                os.path.join(self.checkout_path, src),
-                os.path.join(self.checkout_path, dest),
-            )
-
-            # copy the folders to their respective destinations from the yaml file - 'move-folders'
-            if os.path.exists(source):
-                self.logger.debug(source, destination)
-                shutil.copytree(
-                    source, destination, ignore=ignore_pattern, dirs_exist_ok=True
+        if self.yaml_move_folders:
+            for src, dest in self.yaml_move_folders.items():
+                source, destination = (
+                    os.path.join(self.checkout_path, src),
+                    os.path.join(self.checkout_path, dest),
                 )
-                self.logger.info(f"Successfully moved {source} to {destination}.")
+
+                # copy the folders to their respective destinations from the yaml file - 'move-folders'
+                if os.path.exists(source):
+                    shutil.copytree(
+                        source, destination, ignore=ignore_pattern, dirs_exist_ok=True
+                    )
+                    self.logger.info(
+                        f"Successfully moved\n{source} ->\n{destination}\n"
+                    )
 
         # copy all folders from .checkout to the repo_path, this is only done here to assist in development
         shutil.copytree(

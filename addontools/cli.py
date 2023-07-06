@@ -2,11 +2,11 @@ import os
 import sys
 import logging
 import argparse
-import tools as wap  # because it was previously called warcraft-addon-packager, or WAP for short
+import addontools as wap  # because it was previously called warcraft-addon-packager, or WAP for short
 
 LOG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), f"addon-tools.log")
 
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 
 logger = logging.getLogger("addon-tools")
 log_format = logging.Formatter("[%(asctime)s]:[%(levelname)s:%(name)s]: %(message)s")

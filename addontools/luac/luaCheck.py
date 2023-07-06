@@ -4,12 +4,12 @@ import shutil
 import logging
 import subprocess
 
-import tools
+import addontools
 
 
 class LuaCheck:
     f"""
-    Class for managing and updating the {tools.cfg.filenames.LUACHECK_NAME} file.
+    Class for managing and updating the {addontools.cfg.filenames.LUACHECK_NAME} file.
     """
 
     def __init__(
@@ -27,8 +27,8 @@ class LuaCheck:
     def get_luac_path(self):
         self.logger.info("Finding luac path...")
 
-        interface = tools.shared.interface.verify_interface(
-            tools.cfg.luac.LC_COMMON_ALIASES
+        interface = addontools.shared.interface.verify_interface(
+            addontools.cfg.luac.LC_COMMON_ALIASES
         )
 
         if not interface:
@@ -54,19 +54,19 @@ class LuaCheck:
         # This is sort of ugly but all it does is take the version string and pick out the numbers.
         luac_version = luac_out.stdout.decode().split(" ")[1].split(".")
 
-        return luac_version in tools.cfg.luac.LC_SUPPORTED_VERSIONS
+        return luac_version in addontools.cfg.luac.LC_SUPPORTED_VERSIONS
 
     def get_luacheck_file(self):
-        self.logger.info(f"Searching for {tools.cfg.filenames.LUACHECK_NAME}...")
+        self.logger.info(f"Searching for {addontools.cfg.filenames.LUACHECK_NAME}...")
         luacheck_file = None
 
         for file in os.listdir(self.directory):
-            if file.endswith(tools.cfg.filenames.LUACHECK_NAME):
+            if file.endswith(addontools.cfg.filenames.LUACHECK_NAME):
                 luacheck_file = os.path.join(self.directory, file)
 
         if not luacheck_file:
             raise FileNotFoundError(
-                f'{tools.cfg.filenames.LUACHECK_NAME} file not found. Specify a custom path with -lc "path/to/{tools.cfg.filenames.LUACHECK_NAME}"'
+                f'{addontools.cfg.filenames.LUACHECK_NAME} file not found. Specify a custom path with -lc "path/to/{addontools.cfg.filenames.LUACHECK_NAME}"'
             )
 
         return luacheck_file
@@ -109,7 +109,7 @@ class LuaCheck:
             "Running luac... (this may take a bit depending on your project)"
         )
 
-        parser = tools.luac.LuaCheckParser(self.luacheck_file)
+        parser = addontools.luac.LuaCheckParser(self.luacheck_file)
         self.luacheck_data = parser.parse_luacheck_file()
 
         lua_files = self.get_all_lua_files()

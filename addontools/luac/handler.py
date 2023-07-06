@@ -1,4 +1,4 @@
-import tools
+import addontools
 
 
 def luac_handler(luacheck_args):
@@ -12,10 +12,10 @@ def luac_handler(luacheck_args):
         if luacheck_args.luac:
             args.append(luacheck_args.luac)
 
-        luacheck = tools.luac.LuaCheck(*args)
+        luacheck = addontools.luac.LuaCheck(*args)
 
         luacheck.add_global_variables_to_luacheckrc()
 
     if luacheck_args.action == "debug":
         luacheck_file = "F:/warcraft-addon-tools/test/.luacheckrc"
-        print(tools.luac.LuaCheckParser(luacheck_file).parse_luacheck_file())
+        print(addontools.luac.LuaCheckParser(luacheck_file).parse_luacheck_file())

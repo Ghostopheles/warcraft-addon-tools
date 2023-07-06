@@ -30,7 +30,7 @@ class Builder:
             f"## Interface: 100000\n",
             f"## Title: {self.name}\n",
             f"## Notes: Notes go here!\n",
-            f"## Author: Author name here!\n",
+            f"## Author: {self.author}\n",
             f"## Version: 0.1\n",
             f"\n",
             f"{self.name}.lua",

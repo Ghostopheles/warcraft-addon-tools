@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 
-from tools.make.libFetch import LibFetch
+from addontools.make.libFetch import LibFetch
 
 logger = logging.getLogger("addon-tools.make.build")
 
@@ -23,7 +23,7 @@ def _libs(make_args):
     fetch = lib_fetcher.get_external_libs()
 
     if not fetch:
-        logger.error("Error occurred while fetching external dependencies.")
+        logger.critical("Error occurred while fetching external dependencies.")
         sys.exit(1)
 
 
