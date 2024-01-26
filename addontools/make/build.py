@@ -14,18 +14,19 @@ def make_handler(make_args):
 
 def _libs(make_args):
     logger.debug("Starting LibFetch...")
-    if not os.path.exists(make_args.directory):
+    if not make_args.directory:
+        directory = os.getcwd()
+    else:
+        directory = make_args.directory
+
+    if not os.path.exists(directory):
         raise FileNotFoundError(
-            # f"Directory path does not exist, please enter the path to the folder containing your {tools.cfg.PKGMETA_NAME} file."
+           f"Directory path does not exist, please enter the path to the folder containing your .pkgmeta file."
         )
 
-    lib_fetcher = LibFetch(make_args.directory)
+    lib_fetcher = LibFetch(directory)
     fetch = lib_fetcher.get_external_libs()
 
     if not fetch:
         logger.critical("Error occurred while fetching external dependencies.")
         sys.exit(1)
-
-
-if __name__ == "__main__":
-    pass

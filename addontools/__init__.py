@@ -6,3 +6,5 @@ import addontools.make as make
 import addontools.shared as shared
 import addontools.yamlTools as yaml
 import addontools.addon as addon
+import addontools.start as start
+import addontools.agent as agent

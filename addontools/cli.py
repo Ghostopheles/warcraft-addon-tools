@@ -23,7 +23,8 @@ logger.addHandler(console_handler)  # adds console handler to our logger
 logger.setLevel(LOG_LEVEL)
 
 parser = argparse.ArgumentParser(
-    prog="addontools.py",
+    prog="wat",
+    usage="%(prog)s [options]",
     description="A Python toolbox for World of Warcraft addon development",
     epilog="Made by Ghost - https://github.com/Ghostamoose/warcraft-addon-tools",
 )
@@ -94,7 +95,6 @@ luacheck_parser.add_argument(
 )
 luacheck_parser.add_argument(
     "-d",
-    "--directory",
     metavar="directory",
     dest="directory",
     required=False,
@@ -119,6 +119,9 @@ luacheck_parser.add_argument(
 )
 
 luacheck_parser.set_defaults(func=wap.luac.luac_handler)
+
+# wap.start.register_start_parser(subparsers)
+wap.agent.register_agent_parser(subparsers)
 
 logger.info(f"Using Python version {sys.version}")
 

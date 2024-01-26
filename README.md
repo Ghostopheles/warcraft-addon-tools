@@ -28,7 +28,7 @@ You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Pytho
 
 Example:
 ```
-python addontools.py make libs -d "<path>/<to>/<your_addon>"
+wat make libs -d "<path>/<to>/<your_addon>"
 ```
 
 You can always use `-h` for help!
