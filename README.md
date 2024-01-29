@@ -9,10 +9,9 @@ Cross-platform Python CLI tools for World of Warcraft Addon development
 You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Python package dependencies with `pip install -r requirements.txt`
 
 ## Usage
-**This will generate a log file beside the .py file!**
 ### Commands
 `make libs`: Grabs external dependencies defined in your .pkgmeta file and places them in the correct folder. For use during development.
-- `-d --directory`: Path to the folder containing your addon and the .pkgmeta file.
+- `-d`: Path to the folder containing your addon and the .pkgmeta file. Defaults to current working directory
 
 `create`: Used to generate a basic addon in your World of Warcraft addons folder (or any folder). Saves you a good 45 seconds of creating a new .lua and .toc file! Can be called with no arguments, will prompt the user for the values.
 - `-n`: A name for your addon.
@@ -28,7 +27,7 @@ You can install [`pyyaml`](https://pypi.org/project/PyYAML/) and any other Pytho
 
 Example:
 ```
-wat make libs -d "<path>/<to>/<your_addon>"
+wat make libs -d "<path>/<to>/<your_addon>" // defaults to current working directory if not provided
 ```
 
 You can always use `-h` for help!
