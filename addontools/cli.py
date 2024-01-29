@@ -1,36 +1,29 @@
 import os
 import sys
+import json
 import logging
+import logging.config
 import argparse
-import addontools as wap  # because it was previously called warcraft-addon-packager, or WAP for short
+import addontools as wap  # because it was previously called warcraft-addon-packager... or wap
 
-LOG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), f"addon-tools.log")
-
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.DEBUG
 
 logger = logging.getLogger("addon-tools")
-log_format = logging.Formatter("[%(asctime)s]:[%(levelname)s:%(name)s]: %(message)s")
 
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(log_format)
-
-file_handler = logging.FileHandler(filename=LOG_PATH, encoding="utf-8", mode="w")
-file_handler.setFormatter(log_format)
-
-logger.addHandler(file_handler)  # adds filehandler to our logger
-logger.addHandler(console_handler)  # adds console handler to our logger
-
-logger.setLevel(LOG_LEVEL)
+log_config_path = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), "logging", "log_config.json"
+)
+with open(log_config_path) as f:
+    config = json.load(f)
+logging.config.dictConfig(config)
 
 parser = argparse.ArgumentParser(
     prog="wat",
     usage="%(prog)s [options]",
     description="A Python toolbox for World of Warcraft addon development",
-    epilog="Made by Ghost - https://github.com/Ghostamoose/warcraft-addon-tools",
+    epilog="Made by Ghost - https://github.com/Ghostopheles/warcraft-addon-tools",
 )
-subparsers = parser.add_subparsers(
-    title="commands", description="tools:", dest="subcommand"
-)
+subparsers = parser.add_subparsers(title="commands", dest="subcommand")
 
 # Build action tools
 
@@ -42,12 +35,11 @@ action_parser.add_argument(
 )
 action_parser.add_argument(
     "-d",
-    "--directory",
     metavar="directory",
     dest="directory",
     type=str,
-    required=True,
-    help=f"Path to the folder that contains your {wap.cfg.filenames.PKGMETA_NAME} file",
+    required=False,
+    help=f"Path to the folder that contains your {wap.cfg.filenames.PKGMETA_NAME} file. Defaults to current working directory.",
 )
 
 action_parser.set_defaults(func=wap.make.make_handler)
@@ -57,7 +49,6 @@ action_parser.set_defaults(func=wap.make.make_handler)
 create_parser = subparsers.add_parser("create", help="Create a new addon.")
 create_parser.add_argument(
     "-d",
-    "--directory",
     metavar="directory",
     dest="directory",
     required=False,

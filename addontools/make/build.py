@@ -21,7 +21,7 @@ def _libs(make_args):
 
     if not os.path.exists(directory):
         raise FileNotFoundError(
-           f"Directory path does not exist, please enter the path to the folder containing your .pkgmeta file."
+            f"Directory path does not exist, please enter the path to the folder containing your .pkgmeta file."
         )
 
     lib_fetcher = LibFetch(directory)

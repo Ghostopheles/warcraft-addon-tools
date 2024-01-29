@@ -24,7 +24,7 @@ class LibFetch:
 
         self.checkout_path = os.path.join(repo_path, ".checkout")
 
-        self.logger = logging.getLogger("addon-tools.lib-fetch")
+        self.logger = logging.getLogger("addon-tools")
 
         self.dotfile_name = addontools.cfg.filenames.PKGMETA_NAME
 
@@ -111,7 +111,6 @@ class LibFetch:
 
         self.logger.info(f"Fetching {internal_dir_name}...")
         lib_path = os.path.join(self.checkout_path, final_dir_path, internal_dir_name)
-        self.logger.debug("Lib path: ", lib_path)
 
         if not os.path.exists(lib_path):
             os.makedirs(lib_path)
@@ -156,7 +155,6 @@ class LibFetch:
                 self.logger.critical(
                     f"Error renaming {internal_dir_name} to {final_dir_name}..."
                 )
-                self.logger.debug(f)
                 return False
 
             except Exception as f:
@@ -184,12 +182,10 @@ class LibFetch:
                 self.logger.critical(
                     f"Error renaming {internal_dir_name} to {final_dir_name}..."
                 )
-                self.logger.debug(f)
                 return False
 
             except Exception as f:
                 self.logger.error(f"Error fetching {internal_dir_name}...")
-                self.logger.critical(f)
                 return False
 
         self.logger.info(f"Successfully pulled {internal_dir_name}.")
